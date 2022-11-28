@@ -102,11 +102,6 @@ class iSTFTNet(pl.LightningModule):
             y_ds_hat_r, y_ds_hat_g, _, _ = self.net_scale_d(y_wav, y_hat.detach())
             loss_disc_s, losses_disc_s_r, losses_disc_s_g = discriminator_loss(y_ds_hat_r, y_ds_hat_g)
 
-            # SPD
-            # y_de_hat_r, y_de_hat_g, _, _ = self.net_spec_d(y_wav, y_hat.detach())
-            # loss_disc_e, losses_disc_e_r, losses_disc_e_g = discriminator_loss(y_de_hat_r, y_de_hat_g)
-
-
             loss_disc_all = loss_disc_p + loss_disc_s # + loss_disc_e
 
             # log
@@ -168,7 +163,10 @@ class iSTFTNet(pl.LightningModule):
             scalar_dict.update({"train/g/p_gen_{}".format(i): v for i, v in enumerate(losses_p_gen)})
             scalar_dict.update({"train/g/s_gen_{}".format(i): v for i, v in enumerate(losses_s_gen)})
 
-            image_dict = {}
+            image_dict = {
+                "slice/mel_org": utils.plot_spectrogram_to_numpy(y_mel[0].data.cpu().numpy()),
+                "slice/mel_gen": utils.plot_spectrogram_to_numpy(y_mel_hat[0].data.cpu().numpy())
+            }
             
             tensorboard = self.logger.experiment
             utils.summarize(

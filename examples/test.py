@@ -44,8 +44,8 @@ def load_local():
     from iSTFTNet.model.iSTFTNet import iSTFTNet
 
     ckpt_path = None
-    if os.path.exists("logs_48k/lightning_logs"):
-        versions = glob.glob("logs_48k/lightning_logs/version_*")
+    if os.path.exists("logs_48k_transformer/lightning_logs"):
+        versions = glob.glob("logs_48k_transformer/lightning_logs/version_*")
         if len(list(versions)) > 0:
             last_ver = sorted(list(versions), key=lambda p: int(p.split("_")[-1]))[-1]
             last_ckpt = os.path.join(last_ver, "checkpoints/last.ckpt")
@@ -61,9 +61,9 @@ def load_local():
 def load_remote():
     return torch.hub.load("vtuber-plan/hifi-gan:v0.3.1", "hifigan_48k", force_reload=False)
 
-invspec = T.InverseSpectrogram(n_fft=16,
-                win_length=16,
-                hop_length=4)
+invspec = T.InverseSpectrogram(n_fft=2048,
+                win_length=2048,
+                hop_length=512)
 
 device = "cpu"
 
@@ -86,7 +86,7 @@ audio_pipeline = AudioPipeline(freq=48000,
                                 n_mel=128,
                                 win_length=2048,
                                 hop_length=512)
-mel = audio_pipeline(wav)
+mel = audio_pipeline(wav).to(device)
 spec, phase = vocoder(mel)
 out = invspec(spec * torch.exp(phase * 1j)).unsqueeze(1)
 

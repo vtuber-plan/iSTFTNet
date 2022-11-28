@@ -49,10 +49,10 @@ hann_window = {}
 
 
 def spectrogram_torch(y, n_fft: int, sampling_rate: int, hop_size: int, win_size: int, center: bool=False):
-    if torch.min(y) < -1.:
-        logging.warning(f'min value is {torch.min(y).detach().cpu().item()}')
-    if torch.max(y) > 1.:
-        logging.warning(f'max value is {torch.max(y).detach().cpu().item()}')
+    # if torch.min(y) < -1.:
+    #     logging.warning(f'min value is {torch.min(y).detach().cpu().item()}')
+    # if torch.max(y) > 1.:
+    #     logging.warning(f'max value is {torch.max(y).detach().cpu().item()}')
 
     global hann_window
     dtype_device = str(y.dtype) + '_' + str(y.device)
@@ -71,10 +71,10 @@ def spectrogram_torch(y, n_fft: int, sampling_rate: int, hop_size: int, win_size
     return spec
 
 def spectrogram_torch_audio(y, n_fft: int, sampling_rate: int, hop_size: int, win_size: int, center: bool=False):
-    if torch.min(y) < -1.:
-        logging.warning(f'min value is {torch.min(y).detach().cpu().item()}')
-    if torch.max(y) > 1.:
-        logging.warning(f'max value is {torch.max(y).detach().cpu().item()}')
+    # if torch.min(y) < -1.:
+    #     logging.warning(f'min value is {torch.min(y).detach().cpu().item()}')
+    # if torch.max(y) > 1.:
+    #     logging.warning(f'max value is {torch.max(y).detach().cpu().item()}')
 
     global hann_window
     dtype_device = str(y.dtype) + '_' + str(y.device)
@@ -110,10 +110,10 @@ def spec_to_mel_torch(spec, n_fft, num_mels, sampling_rate, fmin, fmax):
 
 
 def mel_spectrogram_torch(y, n_fft: int, num_mels: int, sampling_rate: int, hop_size: int, win_size: int, fmin: int, fmax: int, center: bool=False):
-    if torch.min(y) < -1.:
-        logging.warning(f'min value is {torch.min(y).detach().cpu().item()}')
-    if torch.max(y) > 1.:
-        logging.warning(f'max value is {torch.max(y).detach().cpu().item()}')
+    # if torch.min(y) < -1.:
+    #     logging.warning(f'min value is {torch.min(y).detach().cpu().item()}')
+    # if torch.max(y) > 1.:
+    #     logging.warning(f'max value is {torch.max(y).detach().cpu().item()}')
 
     global mel_basis, hann_window
     dtype_device = str(y.dtype) + '_' + str(y.device)

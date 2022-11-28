@@ -2,7 +2,7 @@
     "trainer": {
         "max_epochs": 20000,
         "accumulate_grad_batches": 1,
-        "default_root_dir": "./logs_48k",
+        "default_root_dir": "./logs_48k_transformer",
         "val_check_interval": 2000,
         "gradient_clip_val": 0.5
     },
@@ -45,8 +45,8 @@
         "upsample_rates": [8,4,4],
         "upsample_initial_channel": 512,
         "upsample_kernel_sizes": [16,8,8],
-        "istft_n_fft": 16,
-        "istft_hop_size": 4,
+        "istft_n_fft": 2048,
+        "istft_hop_size": 512,
         "use_spectral_norm": false,
         "multi_period_discriminator_periods": [2, 3, 5, 7, 11, 13, 17, 19, 23, 37]
     }

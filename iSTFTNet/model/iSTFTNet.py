@@ -14,6 +14,8 @@ import random
 import pytorch_lightning as pl
 import torchmetrics
 
+from iSTFTNet.model.generators.transformer_generator import TransformerGenerator
+
 from .discriminators.multi_scale_discriminator import MultiScaleDiscriminator
 from .discriminators.multi_period_discriminator import MultiPeriodDiscriminator
 from .discriminators.spectrogram_discriminator import SpectrogramDiscriminator
@@ -30,6 +32,7 @@ class iSTFTNet(pl.LightningModule):
         super().__init__()
         self.save_hyperparameters(*[k for k in kwargs])
 
+        '''
         self.net_g = iSTFTNetGenerator(
             self.hparams.model.istft_n_fft,
             self.hparams.model.inter_channels,
@@ -39,6 +42,8 @@ class iSTFTNet(pl.LightningModule):
             self.hparams.model.upsample_initial_channel,
             self.hparams.model.upsample_kernel_sizes
         )
+        '''
+        self.net_g = TransformerGenerator(self.hparams.model.istft_n_fft, self.hparams.model.inter_channels)
         self.net_period_d = MultiPeriodDiscriminator(
             periods=self.hparams.model.multi_period_discriminator_periods,
             use_spectral_norm=self.hparams.model.use_spectral_norm
@@ -133,10 +138,6 @@ class iSTFTNet(pl.LightningModule):
             loss_s_fm = feature_loss(fmap_s_r, fmap_s_g)
             loss_s_gen, losses_s_gen = generator_loss(y_ds_hat_g)
 
-            # y_de_hat_r, y_de_hat_g, fmap_e_r, fmap_e_g = self.net_spec_d(y_wav, y_hat)
-            # loss_e_fm = feature_loss(fmap_e_r, fmap_e_g)
-            # loss_e_gen, losses_e_gen = generator_loss(y_de_hat_g)
-
             y_mel = mel_spectrogram_torch(
                 y_wav.squeeze(1).float(),
                 self.hparams.data.filter_length,
@@ -151,7 +152,7 @@ class iSTFTNet(pl.LightningModule):
             # mel
             loss_mel = F.l1_loss(y_mel_hat, y_mel) * self.hparams.train.c_mel
 
-            loss_gen_all = (loss_s_gen + loss_s_fm) + (loss_p_gen + loss_p_fm) + loss_mel # + (loss_e_gen + loss_e_fm)
+            loss_gen_all = (loss_s_gen + loss_s_fm) + (loss_p_gen + loss_p_fm) + loss_mel
 
             # Logging to TensorBoard by default
             lr = self.optim_g.param_groups[0]['lr']
@@ -167,11 +168,6 @@ class iSTFTNet(pl.LightningModule):
             scalar_dict.update({"train/g/p_gen_{}".format(i): v for i, v in enumerate(losses_p_gen)})
             scalar_dict.update({"train/g/s_gen_{}".format(i): v for i, v in enumerate(losses_s_gen)})
 
-            # image_dict = {
-            #     "slice/mel_org": utils.plot_spectrogram_to_numpy(y_mel[0].data.cpu().numpy()),
-            #     "slice/mel_gen": utils.plot_spectrogram_to_numpy(y_mel_hat[0].data.cpu().numpy()), 
-            #     "all/mel": utils.plot_spectrogram_to_numpy(mel[0].data.cpu().numpy())
-            # }
             image_dict = {}
             
             tensorboard = self.logger.experiment

@@ -24,12 +24,12 @@ class TransformerGenerator(torch.nn.Module):
         self.inter_channel = self.fft_channel // 2 // self.n_head * self.n_head
 
         self.spec_conv_pre = Conv1d(in_channels=initial_channel, out_channels=self.inter_channel, kernel_size=7, stride=1, padding=3)
-        self.spec_encoder_layer = nn.TransformerEncoderLayer(d_model=self.inter_channel, nhead=self.n_head, batch_first=True)
+        self.spec_encoder_layer = nn.TransformerEncoderLayer(d_model=self.inter_channel, nhead=self.n_head, batch_first=True, activation="gelu")
         self.spec_encoder = nn.TransformerEncoder(self.spec_encoder_layer, num_layers=6)
         self.spec_conv_post = Conv1d(in_channels=self.inter_channel, out_channels=self.fft_channel, kernel_size=7, stride=1, padding=3)
         
         self.phase_conv_pre = Conv1d(in_channels=initial_channel, out_channels=self.inter_channel, kernel_size=7, stride=1, padding=3)
-        self.phase_encoder_layer = nn.TransformerEncoderLayer(d_model=self.inter_channel, nhead=self.n_head, batch_first=True)
+        self.phase_encoder_layer = nn.TransformerEncoderLayer(d_model=self.inter_channel, nhead=self.n_head, batch_first=True, activation="gelu")
         self.phase_encoder = nn.TransformerEncoder(self.phase_encoder_layer, num_layers=6)
         self.phase_conv_post = Conv1d(in_channels=self.inter_channel, out_channels=self.fft_channel, kernel_size=7, stride=1, padding=3)
         
@@ -46,8 +46,11 @@ class TransformerGenerator(torch.nn.Module):
         phase_out = self.phase_encoder(phase_out.transpose(1,2)).transpose(1,2)
         phase_out = self.phase_conv_post(phase_out)
         
+        # spec = torch.exp(spec_out)
+        # phase = torch.sin(phase_out)
+
         spec = torch.exp(spec_out)
-        phase = torch.sin(phase_out)
+        phase = phase_out
 
         return spec, phase
 

@@ -78,8 +78,8 @@ class iSTFTNet(pl.LightningModule):
 
         # generator forward
         spec, phase = self.net_g(x_mel)
-
-        y_hat = self.invspec(spec * torch.exp(phase * 1j)).unsqueeze(1)
+        y_magnitude_hat = spec * torch.exp(phase * 1j)
+        y_hat = self.invspec(y_magnitude_hat).unsqueeze(1)
 
         y_mel_hat = mel_spectrogram_torch(
             y_hat.squeeze(1).float(),
@@ -102,7 +102,7 @@ class iSTFTNet(pl.LightningModule):
             y_ds_hat_r, y_ds_hat_g, _, _ = self.net_scale_d(y_wav, y_hat.detach())
             loss_disc_s, losses_disc_s_r, losses_disc_s_g = discriminator_loss(y_ds_hat_r, y_ds_hat_g)
 
-            loss_disc_all = loss_disc_p + loss_disc_s # + loss_disc_e
+            loss_disc_all = loss_disc_p + loss_disc_s
 
             # log
             lr = self.optim_g.param_groups[0]['lr']
@@ -195,8 +195,8 @@ class iSTFTNet(pl.LightningModule):
 
         # remove else
         spec, phase = self.net_g(x_mel)
-        y_spec_hat = spec * torch.exp(phase * 1j)
-        y_wav_hat = self.invspec(y_spec_hat).unsqueeze(1)
+        y_magnitude_hat = spec * torch.exp(phase * 1j)
+        y_wav_hat = self.invspec(y_magnitude_hat).unsqueeze(1)
         y_hat_lengths = torch.tensor([y_wav_hat.shape[2]], dtype=torch.long)
 
         y_mel = spec_to_mel_torch(

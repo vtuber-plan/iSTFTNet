@@ -75,6 +75,7 @@ vocoder = load_local().to(device)
 
 # Load audio
 wav, sr = torchaudio.load("../hifi-gan/dataset/103 Chinese Mandarin Songs in Acapella - Female/000102_01.wav")
+# wav, sr = torchaudio.load("../hifi-gan/zszy_48k.wav")
 if sr != 48000:
     wav = torchaudio.functional.resample(waveform=wav, orig_freq=sr, new_freq=48000)
 
@@ -86,11 +87,16 @@ audio_pipeline = AudioPipeline(freq=48000,
                                 n_mel=128,
                                 win_length=2048,
                                 hop_length=512)
-mel = audio_pipeline(wav).to(device)
-spec, phase = vocoder(mel)
-out = invspec(spec * torch.exp(phase * 1j)).unsqueeze(1)
 
-wav_out = out.squeeze(0).cpu()
+with torch.inference_mode():
+    mel = audio_pipeline(wav).to(device)
+    spec, phase = vocoder(mel)
+    y_magnitude_hat = spec * torch.exp(phase * 1j)
+    print(y_magnitude_hat.real.max(), y_magnitude_hat.real.min())
+    print(y_magnitude_hat.imag.max(), y_magnitude_hat.imag.min())
+    out = invspec(y_magnitude_hat).unsqueeze(1)
+
+    wav_out = out.squeeze(0).cpu()
 
 torchaudio.save("test_out.wav", wav_out, 48000)
 

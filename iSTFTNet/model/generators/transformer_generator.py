@@ -3,6 +3,8 @@
 from functools import reduce
 import operator
 from typing import List, Union
+
+import numpy as np
 import torch
 from torch import nn
 from torch.nn import functional as F
@@ -50,7 +52,7 @@ class TransformerGenerator(torch.nn.Module):
         # phase = torch.sin(phase_out)
 
         spec = torch.exp(spec_out)
-        phase = phase_out
+        phase = torch.tanh(phase_out) * 2 * np.PI
 
         return spec, phase
 

@@ -35,6 +35,8 @@ class AudioPipeline(torch.nn.Module):
         shift_waveform = waveform
         # Convert to power spectrogram
         spec = self.spec(shift_waveform)
+        print(spec.real.max(), spec.real.min())
+        print(spec.imag.max(), spec.imag.min())
         spec = torch.sqrt(spec.real.pow(2) + spec.imag.pow(2) + 1e-6)
         # Convert to mel-scale
         mel = self.mel_scale(spec)

@@ -2,7 +2,7 @@
     "trainer": {
         "max_epochs": 20000,
         "accumulate_grad_batches": 1,
-        "default_root_dir": "./logs_48k",
+        "default_root_dir": "./logs_44.1k",
         "val_check_interval": 2000,
         "gradient_clip_val": 0.5
     },
@@ -12,7 +12,7 @@
         "seed": 1234,
         "max_epochs": 20000,
         "generator_learning_rate": 0.0002,
-        "discriminator_learning_rate": 0.0001,
+        "discriminator_learning_rate": 0.0002,
         "betas": [0.8, 0.99],
         "eps": 1e-9,
         "batch_size": 16,
@@ -24,9 +24,9 @@
         "c_mel": 45
     },
     "data": {
-        "training_files": "filelists/48k_audio_filelist_train.txt",
-        "validation_files": "filelists/48k_audio_filelist_valid.txt",
-        "sampling_rate": 48000,
+        "training_files": "filelists/44.1k_audio_filelist_train.txt",
+        "validation_files": "filelists/44.1k_audio_filelist_valid.txt",
+        "sampling_rate": 44100,
         "filter_length": 2048,
         "hop_length": 512,
         "win_length": 2048,

@@ -52,7 +52,7 @@ class TransformerGenerator(torch.nn.Module):
         # phase = torch.sin(phase_out)
 
         spec = torch.exp(spec_out)
-        phase = torch.tanh(phase_out) * 2 * np.PI
+        phase = torch.tanh(phase_out) * 2 * np.pi
 
         return spec, phase
 

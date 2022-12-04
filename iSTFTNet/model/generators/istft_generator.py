@@ -11,6 +11,8 @@ from torch.nn import Conv1d, ConvTranspose1d, AvgPool1d, Conv2d
 from torch.nn.utils import weight_norm, remove_weight_norm, spectral_norm
 from ..commons import init_weights, get_padding
 
+import numpy as np
+
 LRELU_SLOPE = 0.1
 
 class ResBlock(torch.nn.Module):
@@ -103,7 +105,7 @@ class iSTFTNetGenerator(torch.nn.Module):
         x = self.reflection_pad(x)
         x = self.conv_post(x)
         spec = torch.exp(x[:,:self.istft_n_fft // 2 + 1, :])
-        phase = torch.sin(x[:, self.istft_n_fft // 2 + 1:, :])
+        phase = torch.tanh(x[:, self.istft_n_fft // 2 + 1:, :]) * 2 * np.pi # (-pi, pi)
 
         return spec, phase
 

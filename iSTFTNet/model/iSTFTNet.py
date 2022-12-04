@@ -32,7 +32,6 @@ class iSTFTNet(pl.LightningModule):
         super().__init__()
         self.save_hyperparameters(*[k for k in kwargs])
 
-        '''
         self.net_g = iSTFTNetGenerator(
             self.hparams.model.istft_n_fft,
             self.hparams.model.inter_channels,
@@ -42,8 +41,7 @@ class iSTFTNet(pl.LightningModule):
             self.hparams.model.upsample_initial_channel,
             self.hparams.model.upsample_kernel_sizes
         )
-        '''
-        self.net_g = TransformerGenerator(self.hparams.model.istft_n_fft, self.hparams.model.inter_channels)
+        # self.net_g = TransformerGenerator(self.hparams.model.istft_n_fft, self.hparams.model.inter_channels)
         self.net_period_d = MultiPeriodDiscriminator(
             periods=self.hparams.model.multi_period_discriminator_periods,
             use_spectral_norm=self.hparams.model.use_spectral_norm
